@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up – HomeBudget</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    const userId = localStorage.getItem('userId');
+
+    if(userId){
+      window.location.href="http://127.0.0.1:5500/index.html";
+      localStorage.setItem("userId",userId);
+    }
+  </script>
+  <style>
+    :root{
+      --bg:#FDF9F0;
+      --divider:#E7DFD8;
+      --navy:#0A1F44;
+      --accent:#F7B538;
+      --muted:#5A6776;
+    }
+    body{background:var(--bg);}
+  </style>
+</head>
+
+<body class="font-sans text-[--muted]">
+
+<!-- ======== SAME HEADER AS CASHBOOK ======== -->
+<header class="fixed top-0 w-full z-50 bg-[--navy] text-white shadow-md">
+  <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+    <h1 class="font-bold text-xl">HomeBudget</h1>
+    <nav class="space-x-6 text-sm">
+      <a href="../index.html" class="text-sm hover:text-[--accent]">← Back Home</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ======== MAIN AREA ======== -->
+<main class="min-h-screen flex items-center justify-center px-4 pt-24 pb-10">
+  <div class="w-full max-w-3xl bg-white rounded-xl shadow-lg border border-[--divider] p-8">
+
+    <h2 class="text-2xl font-bold text-[--navy] mb-6 text-center">Create your HomeBudget Account</h2>
+
+    <!--  TABLE-LIKE FORM  -->
+    <form action="#" method="POST" id="registerForm">
+      <table class="w-full text-sm">
+        <tbody>
+          <!-- Row 1 -->
+          <tr class="border-b border-[--divider]">
+            <td class="py-3 pr-4 font-medium text-[--navy] align-top">Full Name</td>
+            <td class="py-3">
+              <input type="text" name="fullName"  id="fullName"
+                     class="w-full px-3 py-2 border border-[--divider] rounded-lg focus:ring-2 focus:ring-[--accent] focus:outline-none"/>
+            </td>
+          </tr>
+
+          <!-- Row 2 -->
+          <tr class="border-b border-[--divider]">
+            <td class="py-3 pr-4 font-medium text-[--navy] align-top">Email</td>
+            <td class="py-3">
+              <input type="email" name="email" id="email"
+                     class="w-full px-3 py-2 border border-[--divider] rounded-lg focus:ring-2 focus:ring-[--accent] focus:outline-none"/>
+            </td>
+          </tr>
+
+          <!-- Row 3 -->
+          <tr class="border-b border-[--divider]">
+            <td class="py-3 pr-4 font-medium text-[--navy] align-top">Password</td>
+            <td class="py-3">
+              <input type="password" name="password" minlength="6"  id="pass"
+                     class="w-full px-3 py-2 border border-[--divider] rounded-lg focus:ring-2 focus:ring-[--accent] focus:outline-none"/>
+            </td>
+          </tr>
+
+          <tr class="border-b border-[--divider]">
+            <td class="py-3 pr-4 font-medium text-[--navy] align-top">Confirm Password</td>
+            <td class="py-3">
+              <input type="password" name="password" minlength="6"  id="confirm_pass"
+                     class="w-full px-3 py-2 border border-[--divider] rounded-lg focus:ring-2 focus:ring-[--accent] focus:outline-none"/>
+            </td>
+          </tr>
+
+          <!-- Row 4 -->
+          <tr class="border-b border-[--divider]">
+            <td class="py-3 pr-4 font-medium text-[--navy] align-top">Household / Family&nbsp;Name</td>
+            <td class="py-3">
+              <input type="text" name="householdName" placeholder="e.g. Sharma Family"  id="family_name"
+                     class="w-full px-3 py-2 border border-[--divider] rounded-lg focus:ring-2 focus:ring-[--accent] focus:outline-none"/>
+            </td>
+          </tr>
+
+          <!-- Row 5 -->
+          <tr class="border-b border-[--divider]">
+            <td class="py-3 pr-4 font-medium text-[--navy] align-top">Default Currency</td>
+            <td class="py-3">
+              <select name="currency" id="curreny_type"
+                      class="w-full px-3 py-2 border border-[--divider] rounded-lg bg-white focus:ring-2 focus:ring-[--accent] focus:outline-none">
+                <option value="INR">₹ INR – Indian Rupee</option>
+                <option value="USD">$ USD – US Dollar</option>
+                <option value="EUR">€ EUR – Euro</option>
+                <option value="GBP">£ GBP – British Pound</option>
+              </select>
+            </td>
+          </tr>
+
+          <!-- Row 6 -->
+          <tr class="border-b border-[--divider]">
+            <td class="py-3 pr-4 font-medium text-[--navy] align-top">Monthly Goal (₹)</td>
+            <td class="py-3">
+              <input type="number" name="monthlyGoal" min="0" placeholder="e.g. 25000" id="saving_goal"
+                     class="w-full px-3 py-2 border border-[--divider] rounded-lg focus:ring-2 focus:ring-[--accent] focus:outline-none"/>
+            </td>
+          </tr>
+
+          <!-- Row 7 -->
+          <!-- <tr>
+            <td class="py-3 pr-4 font-medium text-[--navy] align-top">Profile Picture</td>
+            <td class="py-3">
+              <input type="file" name="avatar" accept="image/*" id="pic"
+                     class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-[--accent]/20 file:text-[--navy] hover:file:bg-[--accent]/40"/>
+            </td>
+          </tr> -->
+        </tbody>
+      </table>
+
+      <!-- Terms & Submit -->
+      <div class="mt-6 space-y-4">
+        <label class="flex items-start space-x-2 text-sm">
+          <input type="checkbox" required class="mt-0.5"/>
+          <span>I agree to the <a href="terms.html" class="underline text-[--accent]">Terms</a> and <a href="privacy.html" class="underline text-[--accent]">Privacy Policy</a></span>
+        </label>
+
+        <button type="submit"
+                class="w-full bg-[--accent] text-[--navy] font-semibold py-3 rounded-lg shadow hover:bg-yellow-400 transition">
+          Create Account
+        </button>
+
+        <p class="text-center text-sm">
+          Already have an account?
+          <a href="login.html" class="font-medium text-[--accent] hover:underline">Log in</a>
+        </p>
+      </div>
+    </form>
+  </div>
+</main>
+
+<script src="../js/registation.js">
+</script>
+</body>
+</html>

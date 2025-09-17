@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cashbook – HomeBudget</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --bg:#FDF9F0;
+      --divider:#E7DFD8;
+      --navy:#0A1F44;
+      --accent:#F7B538;
+      --muted:#5A6776;
+    }
+    body{background:var(--bg);}
+  </style>
+</head>
+
+<body class="font-sans text-[--muted]">
+  <!--  NAVBAR  -->
+  <nav class="bg-[--navy] text-white">
+    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+      <h1 class="font-bold text-lg">Cashbook</h1>
+      <a href="../index.html" class="text-sm hover:text-[--accent]">← Back Home</a>
+    </div>
+  </nav>
+
+  <!--  SUMMARY CARDS  -->
+  <main class="max-w-2xl mx-auto px-4 py-6 space-y-6">
+    <div class="grid grid-cols-2 gap-4">
+      <div class="bg-white rounded-xl border border-[--divider] p-4 text-center">
+        <p class="text-xs text-[--muted]">Total Balance</p>
+        <p class="text-3xl font-bold text-[--navy]">₹70</p>
+      </div>
+      <div class="bg-white rounded-xl border border-[--divider] p-4 text-center">
+        <p class="text-xs text-[--muted]">Today's Balance</p>
+        <p class="text-3xl font-bold text-[--navy]">₹70</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="bg-white rounded-xl border border-[--divider] p-4 text-center">
+        <p class="text-xs text-[--muted]">Cash in Hand</p>
+        <p class="text-2xl font-bold text-[--navy]">₹70</p>
+      </div>
+      <div class="bg-white rounded-xl border border-[--divider] p-4 text-center">
+        <p class="text-xs text-[--muted]">Online</p>
+        <p class="text-2xl font-bold text-[--navy]">₹70</p>
+      </div>
+    </div>
+
+    <!--  CTA  -->
+    <button class="w-full bg-[--accent] text-[--navy] font-semibold py-3 rounded-lg shadow hover:bg-yellow-400 transition">
+      View Cashbook Report
+    </button>
+
+    <!--  TODAY'S ENTRIES  -->
+    <section>
+      <h2 class="text-lg font-semibold text-[--navy] mb-2">26 JUL</h2>
+      <div class="bg-white rounded-xl border border-[--divider] divide-y divide-[--divider]">
+        <div class="p-4 flex justify-between items-center">
+          <span class="text-sm">0 Entry</span>
+          <div class="flex gap-4">
+            <span class="text-red-600">OUT ₹0</span>
+            <span class="text-green-600">IN ₹0</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--  ADD ENTRY BUTTON  -->
+    <button id="addEntryBtn" class="w-full mt-6 border-2 border-dashed border-[--divider] text-[--muted] py-4 rounded-xl hover:border-[--accent] hover:text-[--accent] transition">
+      + Add Your First Entry
+    </button>
+  </main>
+
+  <script>
+    // Dark-mode toggle (copied from main site)
+    document.getElementById('darkToggle')?.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+    });
+
+    // Placeholder action for "Add Entry"
+    document.getElementById('addEntryBtn').addEventListener('click', () => {
+      alert('Entry form will open here');
+    });
+  </script>
+</body>
+</html>
