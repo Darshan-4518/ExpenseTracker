@@ -651,7 +651,7 @@ app.post('/api/send-mails',async (req,res)=>{
         return
     }
     
-    emails.forEach( e => sendMail("darshanvirani010@gmail.com",e,subject,text));
+    emails.forEach( e => sendMail("darshanvirani010@gmail.com",e,subject,message));
 
     res.status(200).json({'msg':'Success','status':200})
 })
