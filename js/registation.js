@@ -14,7 +14,7 @@ let familyName = "";
 let currency = "";
 let savingGoal = "";
 
-let generatedOtp = "";
+let generatedOtp = null;
 
 async function callOTPApi(email) {
     fetch(`http://localhost:3000/api/otp?email=${email}`).then(async (e) => {
@@ -105,6 +105,7 @@ function resendOtp() {
 }
 
 function cancelOtp() {
+    generatedOtp=null;
     document.getElementById('otpModal').classList.add('hidden');
     document.getElementById('otpInput').value = '';
 }

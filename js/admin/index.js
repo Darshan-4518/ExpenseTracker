@@ -18,6 +18,14 @@ async function callSendEmailApis(subject, message, emails) {
     })
 }
 
+async function callDeteteUserApis(user,reason) {
+    fetch("http://127.0.0.1:3000/api/user", {
+        method: "DELETE",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user:user,reason:reason,adminId:userId})
+    })
+}
+
 function showDeleteModal(index) {
     userNumberToDelete = index;
     document.getElementById('deleteModal').classList.remove('hidden');
@@ -37,7 +45,7 @@ function confirmDelete() {
     }
 
     console.log(`Deleting user ${userNumberToDelete} for reason: ${reason}`);
-    deleteUser();
+    deleteUser(reason);
     cancelDelete();
 }
 
@@ -74,10 +82,10 @@ function renderOtherAdmins() {
     });
 }
 
-function deleteUser() {
+function deleteUser(reason) {
     if (userNumberToDelete) {
         let index = userNumberToDelete - 1;
-        users.splice(index, 1);
+        callDeteteUserApis(users.splice(index, 1)[0],reason)
         renderUsers();
         renderOtherAdmins();
     }
