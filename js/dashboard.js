@@ -18,7 +18,7 @@ document.getElementById('add-entry-btn').addEventListener('click', () => {
         isValid = false;
         alert('Amount must be provided');
     }
-    else if (amt < 0) {
+    else if (amt <= 0) {
         isValid = false;
         alert('Amount must be greater then Zero');
     }
