@@ -17,7 +17,7 @@ let savingGoal = "";
 let generatedOtp = null;
 
 async function callOTPApi(email) {
-    fetch(`http://localhost:3000/api/otp?email=${email}`).then(async (e) => {
+    fetch(`http://192.168.1.142:3000/api/otp?email=${email}`).then(async (e) => {
         const response = await e.json()
         generatedOtp = response.otp;
 
@@ -30,7 +30,7 @@ async function checkUsereExists(email) {
 
     let result = false;
 
-    const response = await fetch(`http://localhost:3000/api/is-user-exists?email=${email}`);
+    const response = await fetch(`http://192.168.1.142:3000/api/is-user-exists?email=${email}`);
 
     const data = await response.json()
 
@@ -60,7 +60,7 @@ function verifyOtp() {
             otp:generatedOtp
         }
 
-        fetch("http://localhost:3000/api/user/signup", {
+        fetch("http://192.168.1.142:3000/api/user/signup", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -89,7 +89,7 @@ function resendOtp() {
         otp: generatedOtp,
     }
 
-    fetch(`http://localhost:3000/api/otp`, {
+    fetch(`http://192.168.1.142:3000/api/otp`, {
         method: "DELETE",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)

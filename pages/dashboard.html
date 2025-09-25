@@ -1,11 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard – HomeBudget</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --bg: #FDF9F0;
+      --divider: #E7DFD8;
+      --navy: #0A1F44;
+      --accent: #F7B538;
+      --muted: #5A6776;
+    }
+    body {
+      background: var(--bg);
+    }
+  </style>
+
   <script>
     const userId = localStorage.getItem('userId');
     const role = localStorage.getItem('role');
@@ -27,7 +39,7 @@
       window.location.href = "http://127.0.0.1:5500/pages/admin/index.html"
     }
      else {
-      fetch(`http://localhost:3000/api/user?userId=${userId}`).then(async (response) => {
+      fetch(`http://192.168.1.142:3000/api/user?userId=${userId}`).then(async (response) => {
         let res_data = await response.json();
         let income = res_data.income;
         let userData = res_data.user;
@@ -48,7 +60,7 @@
         document.getElementById('lastname').innerText = userData.family_name + "'s Family";
       }).then(()=>{
 
-        fetch(`http://localhost:3000/api/transcation/get-income-expense?userId=${userId}&month=${month}&year=${year}`).then(async (response) => {
+        fetch(`http://192.168.1.142:3000/api/transcation/get-income-expense?userId=${userId}&month=${month}&year=${year}`).then(async (response) => {
           let res_data = await response.json() ?? {income : 0 ,expense :0};
   
           income = res_data.income;
@@ -61,39 +73,23 @@
       })
     }
   </script>
-  <style>
-    :root {
-      --bg: #FDF9F0;
-      --divider: #E7DFD8;
-      --navy: #0A1F44;
-      --accent: #F7B538;
-      --muted: #5A6776;
-    }
-
-    body {
-      background: var(--bg);
-    }
-  </style>
 </head>
-
 <body class="font-sans text-[--muted]">
 
-  <!-- ======= HEADER ======= -->
-  <!-- STICKY NAVBAR -->
+  <!-- HEADER -->
   <header class="fixed top-0 w-full z-50 bg-[--navy] text-white shadow-md">
     <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
       <h1 class="font-bold text-xl">Dashboard</h1>
       <nav class="space-x-6 text-sm">
-        <a href="../index.html" class="text-sm hover:text-[--accent]">← Back Home</a>
-
+        <a href="../index.html" class="hover:text-[--accent]">← Back Home</a>
       </nav>
     </div>
   </header>
 
-  <!-- ======= MAIN CONTENT ======= -->
+  <!-- MAIN CONTENT -->
   <main class="pt-24 pb-12 px-4 max-w-6xl mx-auto space-y-10">
 
-    <!-- Greeting + Summary -->
+    <!-- Greeting -->
     <section class="bg-white rounded-xl shadow border border-[--divider] p-6">
       <h2 class="text-xl font-bold text-[--navy]">Welcome back, <span id="lastname"></span> 👋</h2>
       <p class="mt-1">Here’s a quick look at your monthly budget progress.</p>
@@ -102,46 +98,44 @@
     <!-- Budget Overview -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <div class="bg-white rounded-xl shadow border border-[--divider] p-6">
-        <h3 class="font-semibold text-[--navy] mb-2" >Monthly Goal</h3>
+        <h3 class="font-semibold text-[--navy] mb-2">Monthly Goal</h3>
         <p class="text-2xl font-bold text-[--accent]" id="monthly-goal"></p>
         <div class="mt-3 w-full bg-[--divider] rounded-full h-3">
           <div class="bg-[--accent] h-3 rounded-full w-[60%]"></div>
         </div>
         <p class="mt-1 text-sm">60% used</p>
       </div>
-
       <div class="bg-white rounded-xl shadow border border-[--divider] p-6">
         <h3 class="font-semibold text-[--navy] mb-2">Total Income</h3>
         <p class="text-xl font-bold text-green-600" id="income"></p>
       </div>
-
       <div class="bg-white rounded-xl shadow border border-[--divider] p-6">
         <h3 class="font-semibold text-[--navy] mb-2">Total Expenses</h3>
         <p class="text-xl font-bold text-red-500" id="expense"></p>
       </div>
     </section>
 
-    <!-- Quick Add Section -->
+    <!-- Quick Add -->
     <section class="bg-white rounded-xl shadow border border-[--divider] p-6">
       <h3 class="font-semibold text-[--navy] mb-4">Quick Add</h3>
       <form class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
         <input id="desc-in" type="text" placeholder="Description"
-          class="col-span-2 px-3 py-2 border border-[--divider] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--accent]" />
+          class="col-span-2 px-3 py-2 border border-[--divider] rounded-lg focus:ring-[--accent]" />
         <input id="amt-in" type="number" min="1"
-          class="px-3 py-2 border border-[--divider] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--accent]" />
+          class="px-3 py-2 border border-[--divider] rounded-lg focus:ring-[--accent]" />
         <select id="transition-type"
-          class="px-3 py-2 border border-[--divider] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[--accent]">
+          class="px-3 py-2 border border-[--divider] rounded-lg bg-white focus:ring-[--accent]">
           <option value="income">Income</option>
           <option value="expense">Expense</option>
         </select>
       </form>
       <button id="add-entry-btn"
-        class="mt-4 bg-[--accent] text-[--navy] font-semibold py-2 px-6 rounded-lg shadow hover:bg-yellow-400 transition">
+        class="mt-4 bg-[--accent] text-[--navy] font-semibold py-2 px-6 rounded-lg hover:bg-yellow-400">
         Add Entry
       </button>
     </section>
 
-    <!-- Recent Transactions -->
+    <!-- Transactions -->
     <section class="bg-white rounded-xl shadow border border-[--divider] p-6">
       <h3 class="font-semibold text-[--navy] mb-4">Recent Transactions</h3>
       <table class="w-full text-sm">
@@ -151,49 +145,43 @@
             <th>Description</th>
             <th>Type</th>
             <th class="text-right">Amount</th>
+            <th class="text-right">Actions</th>
           </tr>
         </thead>
-        <tbody id="tbody">
-          <!-- <tr class="border-b border-[--divider]">
-            <td class="py-2">Aug 5</td>
-            <td>Salary</td>
-            <td class="text-green-600">Income</td>
-            <td class="text-right font-medium text-green-600">₹18,000</td>
-          </tr>
-          <tr class="border-b border-[--divider]">
-            <td class="py-2">Aug 6</td>
-            <td>Groceries</td>
-            <td class="text-red-500">Expense</td>
-            <td class="text-right font-medium text-red-500">₹3,200</td>
-          </tr>
-          <tr>
-            <td class="py-2">Aug 7</td>
-            <td>Electricity Bill</td>
-            <td class="text-red-500">Expense</td>
-            <td class="text-right font-medium text-red-500">₹1,800</td>
-          </tr> -->
-          
-        </tbody>
+        <tbody id="tbody"></tbody>
       </table>
     </section>
 
-    <!-- Family Members (Optional) -->
+    <!-- Family Members -->
     <section class="bg-white rounded-xl shadow border border-[--divider] p-6">
       <h3 class="font-semibold text-[--navy] mb-4">Family Members</h3>
       <ul class="space-y-2 text-sm">
-        <li class="flex justify-between">
-          <span>Dhruvi</span>
-          <span class="text-[--muted]">Admin</span>
-        </li>
-        <li class="flex justify-between">
-          <span>Harsh</span>
-          <span class="text-[--muted]">Viewer</span>
-        </li>
+        <li class="flex justify-between"><span>Dhruvi</span><span class="text-[--muted]">Admin</span></li>
+        <li class="flex justify-between"><span>Harsh</span><span class="text-[--muted]">Viewer</span></li>
       </ul>
     </section>
 
   </main>
+
+
+<div id="update-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white p-6 rounded-lg w-full max-w-md">
+    <h3 class="text-lg font-semibold mb-4">Update Transaction</h3>
+    <input id="update-date" type="date" class="w-full mb-2 px-3 py-2 border rounded" />
+    <input id="update-desc" type="text" placeholder="Description" class="w-full mb-2 px-3 py-2 border rounded" />
+    <input id="update-amt" type="number" min="1" class="w-full mb-2 px-3 py-2 border rounded" />
+    <select id="update-type" class="w-full mb-4 px-3 py-2 border rounded">
+      <option value="income">Income</option>
+      <option value="expense">Expense</option>
+    </select>
+    <div class="flex justify-end space-x-2">
+      <button id="cancel-update" class="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+      <button id="save-update" class="px-4 py-2 bg-[--accent] text-white rounded">Save</button>
+    </div>
+  </div>
+</div>
+
+
   <script src="../js/dashboard.js"></script>
 </body>
-
 </html>

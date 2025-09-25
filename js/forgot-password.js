@@ -3,7 +3,7 @@ let mainOtp = 0;
 let mainEmail = "";
 
 async function callOTPApi(email) {
-    fetch(`http://localhost:3000/api/otp?email=${email}`).then(async (e) => {
+    fetch(`http://192.168.1.142:3000/api/otp?email=${email}`).then(async (e) => {
         const response = await e.json()
         mainOtp = response.otp;
     })
@@ -13,7 +13,7 @@ async function checkUsereExists(email) {
 
     let result = false;
 
-    const response = await fetch(`http://localhost:3000/api/is-user-exists?email=${email}`);
+    const response = await fetch(`http://192.168.1.142:3000/api/is-user-exists?email=${email}`);
 
     const data = await response.json()
 
@@ -89,7 +89,7 @@ document.getElementById('resetForm').addEventListener('submit', function (e) {
         password: pass
     }
 
-    fetch(`http://localhost:3000/api/change-password`, {
+    fetch(`http://192.168.1.142:3000/api/change-password`, {
         method: "PUT",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -112,7 +112,7 @@ resendBtn.addEventListener('click', function () {
         otp: mainOtp,
     }
 
-    fetch(`http://localhost:3000/api/otp`, {
+    fetch(`http://192.168.1.142:3000/api/otp`, {
         method: "DELETE",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)

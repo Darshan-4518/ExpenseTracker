@@ -39,7 +39,7 @@ document.getElementById('add-entry-btn').addEventListener('click', () => {
             userId: userId
         }
 
-        fetch("http://localhost:3000/api/transaction", {
+        fetch("http://192.168.1.142:3000/api/transaction", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -80,11 +80,11 @@ document.getElementById('add-entry-btn').addEventListener('click', () => {
                                     <td class="text-right font-medium text${className}">
                                         ${amt}
                                     </td>
+                                    <td class="text-right space-x-2">
+                                        <button class="update-btn text-blue-600 hover:underline">Update</button>
+                                        <button class="delete-btn text-red-600 hover:underline">Delete</button>
+                                    </td>
                                 </tr>`;
-
-                console.log(tableBodyObj);
-                console.log(newRow);
-                
 
                 tableBodyObj.innerHTML = newRow + `${tableBodyObj.innerHTML}`;
 
@@ -99,8 +99,36 @@ document.getElementById('add-entry-btn').addEventListener('click', () => {
 
 })
 
+function formatDateForInput(dateStr) {
+    console.log(dateStr);
+    const d = new Date(dateStr);
+    return d.toISOString().split("T")[0];
+}
+
+document.getElementById("tbody").addEventListener("click", (e) => {
+    if (e.target.classList.contains("update-btn")) {
+        const row = e.target.closest("tr");
+        const id = row.dataset.id;
+        const desc = row.children[1].innerText;
+        const type = row.children[2].innerText.toLowerCase();
+        const amt = row.children[3].innerText.replace(symbol, "").trim();
+        const date = row.children[0].innerText;
+
+        document.getElementById("update-desc").value = desc;
+        document.getElementById("update-type").value = type;
+        document.getElementById("update-amt").value = amt;
+        document.getElementById("update-date").value = formatDateForInput(date);
+        document.getElementById("update-modal").style.display = "flex";
+        document.getElementById("save-update").dataset.id = id;
+    }
+});
+
+document.getElementById("cancel-update").addEventListener("click", () => {
+    document.getElementById("update-modal").style.display = "none";
+});
+
 async function getTransactionsByMonthAndYear(month, year) {
-    fetch(`http://localhost:3000/api/transaction?userId=${userId}&month=${month}&year=${year}`).then(async (e) => {
+    fetch(`http://192.168.1.142:3000/api/transaction?userId=${userId}&month=${month}&year=${year}`).then(async (e) => {
         const response = await e.json();
 
         const data = response.data;
@@ -115,8 +143,8 @@ async function getTransactionsByMonthAndYear(month, year) {
                 const type = isExpense ? "Expense" : "Income";
 
                 const className = isExpense ? "red-500" : "green-600";
-                
-                
+
+
                 let bodyRaw = `<tr class="border-b border-[--divider]">
                                     <td class="py-2">
                                         ${monthName} ${splitedDate[2]}
@@ -130,8 +158,12 @@ async function getTransactionsByMonthAndYear(month, year) {
                                     <td class="text-right font-medium text${className}">
                                         ${obj.amount}
                                     </td>
+                                    <td class="text-right space-x-2">
+                                        <button class="update-btn text-blue-600 hover:underline">Update</button>
+                                        <button class="delete-btn text-red-600 hover:underline">Delete</button>
+                                    </td>
                                 </tr>`;
-                                
+
                 tableBody += bodyRaw;
 
             }
@@ -141,4 +173,4 @@ async function getTransactionsByMonthAndYear(month, year) {
     })
 }
 
-getTransactionsByMonthAndYear(currDate.getMonth()+1,currDate.getFullYear())
+getTransactionsByMonthAndYear(currDate.getMonth() + 1, currDate.getFullYear())

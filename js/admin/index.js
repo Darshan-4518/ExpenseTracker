@@ -129,7 +129,7 @@ function sendEmailToSelected() {
 }
 
 async function getAllTheUsers() {
-    return fetch("http://localhost:3000/api/users").then(async (e) => {
+    return fetch("http://192.168.1.142:3000/api/users").then(async (e) => {
         const response = await e.json();
 
         users = response.data.filter(u => u._id !== userId);
