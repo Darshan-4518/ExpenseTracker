@@ -5,8 +5,8 @@ const {getRndInteger} = require('./generate_otp')
 const port="3000"
 app = express()
 app.use(express.json(),cors())
-const mongoose = require("mongoose");
-
+const {mongoose} = require("mongoose");
+const { sendMail } = require("./mail_service")
 
 const mongoConnectionString="mongodb://127.0.0.1:27017/expense_tracker"
 const monthNames = ['Jan','Fab','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec']
@@ -51,6 +51,7 @@ const userSchema = new mongoose.Schema({
 const transactionAuditSchema = new mongoose.Schema({
     date : {
         type:Date,
+        default:Date.now,
         required:true
     },
     description:{
@@ -99,12 +100,7 @@ const otpVerificationSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
-    isUsed:{
-        type:Boolean,
-        required:true,
-        default:false
-    },
-     userId:{
+    email:{
         type:String,
         required:true
     }
@@ -123,7 +119,7 @@ return result;
 async function create(Model,obj) {
 const result = await Model.create(obj);
 
-console.log("result",result);
+
 
 return result;
 }
@@ -134,6 +130,24 @@ async function findOne(Model,obj){
     return result;
 }
 
+async function findDataAndSortedByDate(Model,obj,isDesc) {
+
+    let value = 1;
+
+    if(isDesc){
+        value = -1;
+    }
+
+    const result = await Model.find(obj).sort({ date: value });
+    
+    return result;
+}
+
+async function find(Model,obj) {
+    const result = await Model.find(obj);
+    
+    return result;
+}
 
 async function findMultiple(Model,obj){
     const result = await Model.find(obj);
@@ -146,6 +160,13 @@ async function updateOne(Model,filterObj,updateObj){
 
     return result;
 }
+
+async function deleteOne(Model,obj) {
+    const result = await Model.deleteOne(obj);
+
+    return result;
+}
+
 
 app.get('/',(req,res)=>{
     res.status(200).send("hello from express");
@@ -166,39 +187,39 @@ app.post('/api/user/signup',async (req,res)=>{
 
     if(!firstName){
         isValid = false;
-        error.append('firstName must be provided');
+        error.push('firstName must be provided');
     }
 
     
     if(!email){
         isValid = false;
-        error.append('email must be provided');
+        error.push('email must be provided');
     }else if(await countDocuments(User,{'email':email})){
         isValid = false;
-        error.append('email is already exists');
+        error.push('email is already exists');
     }
 
     if(!password || password.length < 8 || password.length > 20){
         isValid = false;
-        error.append('password length nust be between 8 to 20');
+        error.push('password length nust be between 8 to 20');
     }
 
     if(!currency){
         isValid = false;
-        error.append('currency must be provided');
+        error.push('currency must be provided');
     }
 
     if(!family_name){
         isValid = false;
-        error.append("Family name can not be Empty");
+        error.push("Family name can not be Empty");
     }
 
     if(!goal){
         isValid=false;
-        error.append('Please Enter Amount in Goal Field');
+        error.push('Please Enter Amount in Goal Field');
     }else if(goal <= 0){
         isValid=false;
-        error.append("Saving Goal must be greater then 0");
+        error.push("Saving Goal must be greater then 0");
     }
 
     if(!isValid){
@@ -230,15 +251,12 @@ app.post("/api/user/login",async (req,res)=>{
     const userObj = await findOne(User,{email:body.email,password:body.password});
 
 
-    console.log(userObj);
-
     if(userObj){
         mess = "success";
         userId = userObj['_id'];
         status = 200;
     }
 
-    console.log(mess);
 
     res.status(status).json({'mess':mess,'userId':userId});
 })
@@ -268,12 +286,14 @@ app.get('/api/user',async (req,res)=>{
 
 let createTransaction = async (transaction) => {
 
-    const date = transaction.date;
+    const date = new Date();
+
+
     const amt = transaction.amount;
     const userId = transaction.userId;
     const isExpense = transaction.isExpense;
-    const month = monthNames[date.getMonth()]
-    const year = date.getFullYear()
+    const month = monthNames[date.getMonth()];
+    const year = date.getFullYear();
 
     const searchFilterObj = {
         month : month,
@@ -306,6 +326,53 @@ let createTransaction = async (transaction) => {
     await updateOne(IncomeExpenseTracker,searchFilterObj,updateObj);
 }
 
+app.get('/api/transaction',async (req,res)=>{
+
+    const monthInNumbers=["0","01","02","03","04","05","06","07","08","09","10","11","12"];
+
+    const userId = req.query.userId;
+    const month = req.query.month;
+    const year = req.query.year;
+    const actualMonth = monthInNumbers[month];
+    const error = []
+
+    let isValid = true;
+
+    if(month < 1 || month > 12){
+        isValid = false;
+        error.push('Please Provide Valid Month');
+    }
+
+    if(year.length != 4){
+        isValid = false;
+        error.push('Please Provide Year of 4 digits');
+    }
+
+    if(!userId){
+        isValid = false;
+        error.push('Please Provide Userid ');
+        // res.status(400).json({'msg':'Please Provide Userid'});
+        return
+    }else if(userId.length != 24){
+        isValid = false;
+        error.push('Userid must be of 24 Characters');
+    }
+
+    
+    if(!isValid){
+        res.status(400).json({'msg':'failed','error':error,'status':400});
+        return
+    }
+
+
+    // res.status(200).json({'data':await find(TransactionAudit,{})});
+
+    // res.status(200).json({'msg':'success'});
+
+    res.status(200).json({'status':200,'msg':'success','data':await findDataAndSortedByDate(TransactionAudit,{date:{$gte:`${year}-${actualMonth}-01T00:00:00.000Z`,$lte:`${year}-${actualMonth}-31T23:59:59.999Z`},userId:userId},true)});
+
+})
+
 app.post('/api/transaction',async (req,res)=>{
     const data = req.body;
 
@@ -320,37 +387,42 @@ app.post('/api/transaction',async (req,res)=>{
 
     if(!description){
         isValid = false;
-        error.append('description must be provide');
+        error.push('description must be provide');
     }
 
     if(!amt){
         isValid = false;
-        error.append('Amount must be provide');
+        error.push('Amount must be provide');
     }else if(amt < 0){
         isValid = false;
-        error.append('Amount must be greater then Zero');
+        error.push('Amount must be greater then Zero');
     } 
 
     if(!userId  && userId.length != 24){
         isValid = false;
-        error.append('Please Provide Userid');
+        error.push('Please Provide Userid');
     }
     
     if(!date){
         isValid = false;
-        error.append('Please Provide date in YYYY-MM-DD format');
+        error.push('Please Provide date in YYYY-MM-DD format');
     }
     
     if(transactionType != 'income' && transactionType!='expense'){
         isValid = false;
-        error.append('transactionType must be provided (either income or expense)');
+        error.push('transactionType must be provided (either income or expense)');
     }
     
 
     if(!isValid){
+
+
         res.status(400).json({'msg':'failed','error':error});
         return
     }
+
+
+    
 
     const formatedDate = new Date(date).toLocaleString();
 
@@ -359,7 +431,6 @@ app.post('/api/transaction',async (req,res)=>{
     const transactionData = {
         description:description,
         amount:amt,
-        date:formatedDate,
         userId:userId,
         isExpense: isExpense
     };
@@ -381,7 +452,7 @@ app.get('/api/transcation/get-income-expense',async (req,res)=>{
 
     if(!userId  && userId.length != 24){
         isValid = false;
-        error.append('Please Provide Userid');
+        error.push('Please Provide Userid');
     }
 
     if(!isValid){
@@ -440,18 +511,103 @@ makeScheduler('0 0 0 1 */1 *', async ()=>{
     }
 })
 
-app.get('/api/otp',async(req,res)=>{
-    const otpCode = getRndInteger(100000,999999);
+app.get(`/api/is-user-exists`,async (req,res)=>{
+    const email = req.query.email;
 
-    const userId = req.query.userId;
-
-    if(userId.length != 24 || ! await countDocuments(User,{_id:userId})){
-        res.status(401).json({'msg':'failed','error':'invalid userId'});
+    if(!email){
+        isValid = false;
+        res.status(404).json({'msg':'email must be provided','status':404});
         return
     }
 
-    await create(OtpVerification,{otpCode:otpCode,userId:userId});
+    let msg = "not exists";
+    let status = 404;
+    if(await countDocuments(User,{email:email})){
+        status = 200;
+        msg = "exists";
+    }
+
+    res.status(status).json({'msg':msg,status:status});
+})
+
+
+
+app.get('/api/otp',async(req,res)=>{
+    const otpCode = getRndInteger(100000,999999);
+    const to = req.query.email;
+
+    // console.log(userId);
+
+    // if(userId.length != 24 || ! await countDocuments(User,{_id: new ObjectId(userId)})){
+    //     res.status(401).json({'msg':'failed','error':'invalid userId'});
+    //     return
+    // }
+
+    await create(OtpVerification,{otpCode:otpCode,email:to});
+
+    const from = "darshanvirani010@gmail.com";
+    const subject = "OTP Verifications"
+
+    sendMail(from,to,subject,"Your OTP is " + otpCode);
 
     res.status(201).json({'msg':'success','otp':otpCode});
 
 })
+
+app.delete("/api/otp",async (req,res) =>{
+    const data = req.body;
+
+    const email = data.email;
+    const otp = data.otp;
+
+    
+    if(!email){
+        res.status(400).json({'msg':'email must be provided'});
+        return
+    }else if(! await countDocuments(User,{'email':email})){
+        isValid = false;
+        res.status(404).json({'msg':'email is not exists'});
+        return
+    }
+
+
+    await deleteOne(OtpVerification,{email:email,otpCode:otp});
+
+    res.status(200).json({'msg':"sucessfully deleted"});
+
+})
+
+app.put('/api/change-password',async (req,res) =>{
+    const data = req.body;
+
+    const email = data.email;
+    const password = data.password;
+    const otp = data.otp;
+    const isValid = true;
+    const error = [];
+    
+    if(!email){
+        isValid = false;
+        error.push('email must be provided');
+    }else if(! await countDocuments(User,{'email':email})){
+        isValid = false;
+        error.push('email is not exists');
+    }
+
+    if(!password || password.length < 8 || password.length > 20){
+        isValid = false;
+        error.push('password length nust be between 8 to 20');
+    }
+
+    if(!isValid){
+        res.status(400).json({'msg':'failed','error':error});
+        return
+    }
+
+    await updateOne(User,{email:email},{password:password});
+
+    await deleteOne(OtpVerification,{email:email,otpCode:otp});
+
+    res.status(200).json({'msg':'Password Succesfully Upadted'});
+
+} )
