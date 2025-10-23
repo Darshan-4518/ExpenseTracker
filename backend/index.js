@@ -7,6 +7,7 @@ app = express()
 app.use(express.json(),cors())
 const {mongoose} = require("mongoose");
 const { sendMail } = require("./mail_service")
+const { text } = require("body-parser")
 
 const mongoConnectionString="mongodb://127.0.0.1:27017/expense_tracker"
 const monthNames = ['Jan','Fab','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec']
@@ -17,7 +18,7 @@ mongoose.connect(mongoConnectionString).then(()=>{
 })  
 
 const userSchema = new mongoose.Schema({
-    fullName:{
+    firstName:{
         type:String,
         required:true
     },
@@ -42,9 +43,10 @@ const userSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
-    isVerified:{
-        type:Boolean,
-        required:true
+    ROLE:{
+        type:String,
+        required:true,
+        default:'USER'
     }
 });
 
@@ -119,8 +121,6 @@ return result;
 async function create(Model,obj) {
 const result = await Model.create(obj);
 
-
-
 return result;
 }
 
@@ -143,8 +143,8 @@ async function findDataAndSortedByDate(Model,obj,isDesc) {
     return result;
 }
 
-async function find(Model,obj) {
-    const result = await Model.find(obj);
+async function find(Model,obj,field) {
+    const result = await Model.find(obj,field);
     
     return result;
 }
@@ -175,12 +175,13 @@ app.get('/',(req,res)=>{
 app.post('/api/user/signup',async (req,res)=>{
     const body = req.body;
 
-    let fullName = body.fullName;
+    let firstName = body.firstName;
     let email = body.email;
     let password = body.pass;
     let currency = body.currency;
     let goal = body.goal;
     let family_name = body.family_name;
+    let otp = body.otp;
 
     let isValid = true;
     let error = []
@@ -227,9 +228,14 @@ app.post('/api/user/signup',async (req,res)=>{
         return
     }
 
+    if(!otp){
+        res.status(400).json({'msg':'failed','error':error});
+        return
+    }
+
 
     let userObj = {
-        fullName:fullName,
+        firstName:firstName,
         email:email,
         password:password,
         currency:currency,
@@ -238,8 +244,16 @@ app.post('/api/user/signup',async (req,res)=>{
     }
 
     await create(User,userObj);
+
+    await deleteOne(OtpVerification,{email:email,otpCode:otp});
     
     res.status(201).json({'msg':"sucess"});
+})
+
+app.get("/api/users",async (req,res)=>{
+    const users = await find(User,{},{firstName:1,email:1,ROLE:1});
+
+    res.status(200).json({'msg':'success',data:users})
 })
 
 app.post("/api/user/login",async (req,res)=>{
@@ -258,7 +272,7 @@ app.post("/api/user/login",async (req,res)=>{
     }
 
 
-    res.status(status).json({'mess':mess,'userId':userId});
+    res.status(status).json({'mess':mess,'userId':userId,'ROLE':userObj.ROLE});
 })
 
 app.get('/api/user',async (req,res)=>{
@@ -564,10 +578,6 @@ app.delete("/api/otp",async (req,res) =>{
     if(!email){
         res.status(400).json({'msg':'email must be provided'});
         return
-    }else if(! await countDocuments(User,{'email':email})){
-        isValid = false;
-        res.status(404).json({'msg':'email is not exists'});
-        return
     }
 
 
@@ -611,3 +621,37 @@ app.put('/api/change-password',async (req,res) =>{
     res.status(200).json({'msg':'Password Succesfully Upadted'});
 
 } )
+
+
+app.post('/api/send-mails',async (req,res)=>{
+    let emails = req.body.emails;
+    let subject = req.body.subject;
+    let message = req.body.message;
+
+    let isValid = true;
+    let error = [];
+
+    if(!emails){
+        isValid = false;
+        error.push('Please Provide Emails');
+    }
+
+    if(!subject){
+        isValid = false;
+        error.push('Please Provide Subject');
+    }
+
+    if(!message){
+        isValid = false;
+        error.push('Please Provide message');
+    }
+
+    if(!isValid){
+        res.status(400).json({'msg':'failed','error':error,'status':400});
+        return
+    }
+    
+    emails.forEach( e => sendMail("darshanvirani010@gmail.com",e,subject,text));
+
+    res.status(200).json({'msg':'Success','status':200})
+})

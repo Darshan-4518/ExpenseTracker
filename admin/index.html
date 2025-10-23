@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel – HomeBudget</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg: #FDF9F0;
+            --divider: #E7DFD8;
+            --navy: #0A1F44;
+            --accent: #F7B538;
+            --muted: #5A6776;
+        }
+
+        body {
+            background: var(--bg);
+        }
+    </style>
+</head>
+
+<body class="font-sans text-[--muted]">
+
+    <header class="fixed top-0 w-full z-50 bg-[--navy] text-white shadow-md">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <h1 class="font-bold text-xl">Admin Dashboard</h1>
+        </div>
+    </header>
+
+
+    <main class="pt-24 px-4 max-w-6xl mx-auto space-y-8">
+
+        <section class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="bg-white border border-[--divider] rounded-lg p-6 shadow">
+                <h2 class="text-lg font-bold text-[--navy]">Total Users</h2>
+                <p class="text-3xl mt-2" id="userCount">0</p>
+            </div>
+            <div class="bg-white border border-[--divider] rounded-lg p-6 shadow">
+                <h2 class="text-lg font-bold text-[--navy]">Total Admins</h2>
+                <p class="text-3xl mt-2" id="adminCount">0</p>
+            </div>
+        </section>
+
+        <section class="bg-white border border-[--divider] rounded-lg p-6 shadow">
+            <h2 class="text-xl font-bold text-[--navy] mb-4">Other Admins</h2>
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-left border-b border-[--divider]">
+                        <th class="py-2">Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTable">
+
+                </tbody>
+            </table>
+        </section>
+
+
+        <section class="bg-white border border-[--divider] rounded-lg p-6 shadow">
+            <h2 class="text-xl font-bold text-[--navy] mb-4">Manage Users</h2>
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="text-left border-b border-[--divider]">
+                        <th class="py-2">Select</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody id="userTable">
+
+                </tbody>
+            </table>
+        </section>
+
+
+        <section class="bg-white border border-[--divider] rounded-lg p-6 shadow">
+            <h2 class="text-xl font-bold text-[--navy] mb-4">Compose Email</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-[--navy]">Subject</label>
+                    <input type="text" id="emailSubject" placeholder="Enter subject"
+                        class="mt-1 w-full px-3 py-2 border border-[--divider] rounded-lg focus:ring-2 focus:ring-[--accent] focus:outline-none" />
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-[--navy]">Message</label>
+                    <textarea id="emailContent" rows="5" placeholder="Write your message here..."
+                        class="mt-1 w-full px-3 py-2 border border-[--divider] rounded-lg focus:ring-2 focus:ring-[--accent] focus:outline-none"></textarea>
+                </div>
+                <div class="flex gap-4">
+                    <button onclick="sendEmailToAll()"
+                        class="bg-[--accent] text-[--navy] px-4 py-2 rounded hover:bg-yellow-400">Send to All
+                        Users</button>
+                    <button onclick="sendEmailToSelected()"
+                        class="bg-[--accent] text-[--navy] px-4 py-2 rounded hover:bg-yellow-400">Send to
+                        Selected</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <script>
+        let users = [
+
+        ];
+
+        const currentUserId = localStorage.getItem("userId");
+
+        const userTable = document.getElementById("userTable");
+        const adminTable = document.getElementById("adminTable");
+        const userCount = document.getElementById("userCount");
+        const adminCount = document.getElementById("adminCount");
+
+        function renderUsers() {
+            userTable.innerHTML = "";
+            userCount.textContent = users.length;
+            adminCount.textContent = users.filter(u => u.role === "admin").length;
+
+            users.forEach(user => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+          <td><input type="checkbox" class="userCheckbox" value="${user.email}"></td>
+          <td class="py-2">${user.firstName}</td>
+          <td>${user.email}</td>
+          <td>${user.ROLE.toLowerCase()}</td>
+          <td><button onclick="deleteUser(${user.id})" class="text-red-600 hover:underline">Delete</button></td>
+        `;
+                userTable.appendChild(row);
+            });
+        }
+
+        function renderOtherAdmins() {
+            console.log(currentUserId);
+            adminTable.innerHTML = "";
+            const otherAdmins = users.filter(u => u.ROLE === "ADMIN" && u._id !== currentUserId);
+            otherAdmins.forEach(admin => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+          <td class="py-2">${admin.firstName}</td>
+          <td>${admin.email}</td>
+          <td>${admin.ROLE.toLowerCase()}</td>
+        `;
+                adminTable.appendChild(row);
+            });
+        }
+
+        function deleteUser(id) {
+            const index = users.findIndex(u => u.id === id);
+            if (index !== -1) {
+                users.splice(index, 1);
+                renderUsers();
+                renderOtherAdmins();
+            }
+        }
+
+        function getEmailDetails() {
+            const subject = document.getElementById("emailSubject").value.trim();
+            const content = document.getElementById("emailContent").value.trim();
+
+            if (!subject || !content) {
+                alert("Please enter both subject and message content.");
+                return null;
+            }
+
+            return { subject, content };
+        }
+
+        function sendEmailToAll() {
+            const details = getEmailDetails();
+            if (!details) return;
+
+            const emails = users.map(u => u.email);
+            alert(`Sending email to ALL users:\n\nSubject: ${details.subject}\nMessage: ${details.content}\nRecipients: ${emails.join(", ")}`);
+        }
+
+        function sendEmailToSelected() {
+            const details = getEmailDetails();
+            if (!details) return;
+
+            const selected = Array.from(document.querySelectorAll(".userCheckbox:checked"))
+                .map(cb => cb.value);
+
+            if (selected.length === 0) {
+                alert("No users selected.");
+                return;
+            }
+
+            alert(`Sending email to SELECTED users:\n\nSubject: ${details.subject}\nMessage: ${details.content}\nRecipients: ${selected.join(", ")}`);
+        }
+
+        async function getAllTheUsers() {
+            return fetch("http://localhost:3000/api/users").then(async (e) => {
+                const response = await e.json();
+
+                console.log(response);
+                
+                users = response.data;
+
+                console.log(users);
+            })
+        }
+
+        getAllTheUsers().then(() => {
+
+            console.log(users);
+
+            renderUsers();
+            renderOtherAdmins();
+        })
+    </script>
+</body>
+
+</html>

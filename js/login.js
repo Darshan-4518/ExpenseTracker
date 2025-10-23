@@ -19,10 +19,20 @@ document.getElementById('loginForm').addEventListener('submit', e => {
       if (response.ok) {
         let responseObj = await response.json();
         let userId = responseObj.userId;
-
+        let role = responseObj.ROLE;
         localStorage.setItem("userId", userId);
+        localStorage.setItem("role", role);
 
-        window.location.href = "../index.html"
+        let destination = "../index.html"
+
+
+        if(responseObj.ROLE === "ADMIN"){
+          console.log("inside this");
+          destination = "../admin/index.html"
+        }
+
+
+        window.location.href = destination;
       } else {
         alert('incorrect email or password');
       }

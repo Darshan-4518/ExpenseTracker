@@ -7,10 +7,16 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     const userId = localStorage.getItem('userId');
-
+    const role = localStorage.getItem('role');
     if(userId){
-      window.location.href="http://127.0.0.1:5500/index.html";
-      localStorage.setItem("userId",userId);
+
+      let destination = "../index.html";
+
+      if(role === "ADMIN"){
+        destination = "../admin/index.html"
+      }
+
+      window.location.href=destination;
     }
   </script>
     <style>
