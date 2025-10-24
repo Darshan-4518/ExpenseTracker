@@ -43,6 +43,11 @@ const userSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
+    isDelete:{
+        type:Boolean,
+        default:false,
+        required:true
+    },
     ROLE:{
         type:String,
         required:true,
@@ -250,6 +255,53 @@ app.post('/api/user/signup',async (req,res)=>{
     res.status(201).json({'msg':"sucess"});
 })
 
+app.delete("/api/user",async(req,res)=>{
+    let user = req.body.user ?? {email:null};
+    let email = user.email;
+    let adminId = req.body.adminId;
+    let reason = req.body.reason;
+
+    let isValid = true;
+    let error = []
+
+
+    if(!email){
+        isValid = false;
+        error.push('Please Provide Email');
+    }else if(!await countDocuments(User,{email:email})){
+        isValid = false;
+        error.push(`User with this ${email} email not exists please check your mail`);
+    }
+
+
+    if(!reason){
+        isValid = false;
+        error.push('Please Provide an reason to remove this user');
+    }
+
+    if(!adminId){
+        isValid = false;
+        error.push('Please Provide Userid ');
+        // res.status(400).json({'msg':'Please Provide Userid'});
+        return
+    }else if(adminId.length != 24){
+        isValid = false;
+        error.push('AdminId must be of 24 Characters');
+    }else if(!await countDocuments(User,{_id:adminId,ROLE:'ADMIN'})){
+        console.log("admin not exists");
+    }
+
+
+    if(!isValid){
+        res.status(400).json({'msg':'failed','error':error,'status':400});
+        return
+    }
+
+    await updateOne(User,{email:email},{isDelete:true});
+
+    res.status(200).json()
+})
+
 app.get("/api/users",async (req,res)=>{
     const users = await find(User,{},{firstName:1,email:1,ROLE:1});
 
@@ -272,7 +324,7 @@ app.post("/api/user/login",async (req,res)=>{
     }
 
 
-    res.status(status).json({'mess':mess,'userId':userId,'ROLE':userObj.ROLE});
+    res.status(status).json({'mess':mess,'userId':userId,'ROLE':userObj.ROLE ?? ''});
 })
 
 app.get('/api/user',async (req,res)=>{

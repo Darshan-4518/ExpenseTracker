@@ -28,7 +28,7 @@ document.getElementById('loginForm').addEventListener('submit', e => {
 
         if(responseObj.ROLE === "ADMIN"){
           console.log("inside this");
-          destination = "../admin/index.html"
+          destination = "./admin/index.html"
         }
 
 

@@ -24,8 +24,6 @@ async function checkUsereExists(email) {
         result = true;
     }
 
-    console.log(result);
-
 
     return result;
 }
@@ -40,8 +38,6 @@ document.getElementById('emailForm').addEventListener('submit', async function (
 
     const email = document.getElementById('emailInput').value;
     const output = await checkUsereExists(email);
-
-    console.log(output);
 
     if (output) {
         await callOTPApi(email);
@@ -100,8 +96,6 @@ document.getElementById('resetForm').addEventListener('submit', function (e) {
     }).then(async (e) => {
         const response = await e.json();
 
-        console.log(response.msg);
-
     })
 
     alert("Password reset successful!");
@@ -124,8 +118,6 @@ resendBtn.addEventListener('click', function () {
         body: JSON.stringify(data)
     }).then(async (e) => {
         const response = await e.json();
-
-        console.log(response.msg);
 
     })
 

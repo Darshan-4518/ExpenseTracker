@@ -8,6 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     const userId = localStorage.getItem('userId');
+    const role = localStorage.getItem('role');
     const monthNames = ['Jan', 'Fab', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
 
     const currDate = new Date();
@@ -22,7 +23,10 @@
 
     if (!userId) {
       window.location.href = "http://127.0.0.1:5500/pages/login.html"
-    } else {
+    }else if(role === 'ADMIN'){
+      window.location.href = "http://127.0.0.1:5500/pages/admin/index.html"
+    }
+     else {
       fetch(`http://localhost:3000/api/user?userId=${userId}`).then(async (response) => {
         let res_data = await response.json();
         let income = res_data.income;

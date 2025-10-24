@@ -1,33 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HomeBudget – Track, Save, Smile</title>
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Colour palette -->
   <style>
-    :root{
-      --bg:#FDF9F0;
-      --divider:#E7DFD8;
-      --navy:#0A1F44;
-      --accent:#F7B538;
-      --muted:#5A6776;
+    :root {
+      --bg: #FDF9F0;
+      --divider: #E7DFD8;
+      --navy: #0A1F44;
+      --accent: #F7B538;
+      --muted: #5A6776;
     }
-    body{background:var(--bg);}
+
+    body {
+      background: var(--bg);
+    }
   </style>
 
   <!-- Custom animations -->
   <style>
     /* Parallax hero */
-    .parallax { transform: translateZ(0); transition: transform .2s ease-out; }
+    .parallax {
+      transform: translateZ(0);
+      transition: transform .2s ease-out;
+    }
 
-    #dashboard{
+    #dashboard {
       display: none;
     }
 
-    #cashbook{
+    #cashbook {
       display: none;
     }
 
@@ -37,203 +44,236 @@
       transform: translateY(30px);
       transition: all .6s ease;
     }
-    .fade-in.appear { opacity: 1; transform: none; }
+
+    .fade-in.appear {
+      opacity: 1;
+      transform: none;
+    }
 
     /* Feature & blog cards */
-    .feature-card, .blog-card, .testimonial-card {
+    .feature-card,
+    .blog-card,
+    .testimonial-card {
       transition: all .3s ease;
     }
-    .feature-card:hover, .blog-card:hover, .testimonial-card:hover {
+
+    .feature-card:hover,
+    .blog-card:hover,
+    .testimonial-card:hover {
       transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 30px -10px rgba(0,0,0,.15);
+      box-shadow: 0 20px 30px -10px rgba(0, 0, 0, .15);
     }
   </style>
-</head>     
+
+  <script>
+    const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem('role');
+
+    if (role === 'ADMIN') {
+      window.location.href = "http://127.0.0.1:5500/pages/admin/index.html"
+    }
+  </script>
+</head>
 
 <body class="font-sans">
 
-<!-- ========= NAVBAR ========= -->
-<nav id="navbar" class="fixed top-0 w-full z-50 text-white transition-all duration-300 bg-[--navy]">
-  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-    <h1 class="font-bold text-xl tracking-tight">HomeBudget</h1>
-    <ul class="hidden md:flex space-x-6 text-sm">
-      <li><a href="#features" class="hover:text-[--accent]">Features</a></li>
-      <li id="dashboard"><a href="pages/dashboard.html" class="hover:text-[--accent]">Dashboard</a></li>
-      <li id="cashbook"><a href="pages/cashbook.html" class="hover:text-[--accent]">Cashbook</a></li>
-      <li id="login_sec"><a href="pages/login.html" class="hover:text-[--accent]">login</a></li>
-      <li id="reg_sec" ><a href="pages/registation.html" class="hover:text-[--accent]">Registration</a></li>
-    </ul>
-    <button id="darkToggle" class="ml-4 text-sm border px-3 py-1 rounded hover:bg-white/10">🌙</button>
-  </div>
-</nav>
+  <!-- ========= NAVBAR ========= -->
+  <nav id="navbar" class="fixed top-0 w-full z-50 text-white transition-all duration-300 bg-[--navy]">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <h1 class="font-bold text-xl tracking-tight">HomeBudget</h1>
+      <ul class="hidden md:flex space-x-6 text-sm">
+        <li><a href="#features" class="hover:text-[--accent]">Features</a></li>
+        <li id="dashboard"><a href="pages/dashboard.html" class="hover:text-[--accent]">Dashboard</a></li>
+        <li id="cashbook"><a href="pages/cashbook.html" class="hover:text-[--accent]">Cashbook</a></li>
+        <li id="login_sec"><a href="pages/login.html" class="hover:text-[--accent]">login</a></li>
+        <li id="reg_sec"><a href="pages/registation.html" class="hover:text-[--accent]">Registration</a></li>
+      </ul>
+      <button id="darkToggle" class="ml-4 text-sm border px-3 py-1 rounded hover:bg-white/10">🌙</button>
+    </div>
+  </nav>
 
-<!-- ========= HERO (online image) ========= -->
-<section class="relative h-[70vh] flex items-center justify-center overflow-hidden">
-  <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1350&q=80"
-       alt="Happy family budgeting"
-       class="absolute inset-0 w-full h-full object-cover -z-10 parallax"/>
-  <div class="absolute inset-0 bg-[--navy]/60 -z-10"></div>
-  <div class="text-white text-center max-w-xl px-4 z-10">
-    <h2 class="text-4xl md:text-5xl font-bold leading-tight">
-      Own your <span class="text-[--accent]">money story.</span>
-    </h2>
-    <p class="text-lg mt-4">Track, share and predict your household spend in one cosy place.</p>
-    <a href="./pages/dashboard.html"><button class="mt-8 bg-[--accent] text-[--navy] font-semibold px-6 py-3 rounded-lg shadow-md hover:scale-105 transition" id="start-free-btn">Start Free</button></a>
-  </div>
-</section>
+  <!-- ========= HERO (online image) ========= -->
+  <section class="relative h-[70vh] flex items-center justify-center overflow-hidden">
+    <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1350&q=80"
+      alt="Happy family budgeting" class="absolute inset-0 w-full h-full object-cover -z-10 parallax" />
+    <div class="absolute inset-0 bg-[--navy]/60 -z-10"></div>
+    <div class="text-white text-center max-w-xl px-4 z-10">
+      <h2 class="text-4xl md:text-5xl font-bold leading-tight">
+        Own your <span class="text-[--accent]">money story.</span>
+      </h2>
+      <p class="text-lg mt-4">Track, share and predict your household spend in one cosy place.</p>
+      <a href="./pages/dashboard.html"><button
+          class="mt-8 bg-[--accent] text-[--navy] font-semibold px-6 py-3 rounded-lg shadow-md hover:scale-105 transition"
+          id="start-free-btn">Start Free</button></a>
+    </div>
+  </section>
 
-<!-- ========= FUNCTIONALITIES (online images) ========= -->
-<section id="features" class="py-20">
-  <div class="max-w-6xl mx-auto px-4">
-    <h3 class="text-3xl font-bold text-[--navy] text-center mb-12">Everything you need</h3>
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-      <div class="feature-card bg-white rounded-xl shadow-sm overflow-hidden border border-[--divider]">
-        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=60" alt="Auto Reports" class="w-full h-40 object-cover">
-        <div class="p-4">
-          <h4 class="font-semibold text-[--navy]">Auto Reports</h4>
-          <p class="text-sm mt-1">Weekly & monthly PDFs delivered to your inbox.</p>
+  <!-- ========= FUNCTIONALITIES (online images) ========= -->
+  <section id="features" class="py-20">
+    <div class="max-w-6xl mx-auto px-4">
+      <h3 class="text-3xl font-bold text-[--navy] text-center mb-12">Everything you need</h3>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="feature-card bg-white rounded-xl shadow-sm overflow-hidden border border-[--divider]">
+          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=60"
+            alt="Auto Reports" class="w-full h-40 object-cover">
+          <div class="p-4">
+            <h4 class="font-semibold text-[--navy]">Auto Reports</h4>
+            <p class="text-sm mt-1">Weekly & monthly PDFs delivered to your inbox.</p>
+          </div>
         </div>
-      </div>
 
-      <div class="feature-card bg-white rounded-xl shadow-sm overflow-hidden border border-[--divider]">
-        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=60" alt="Cloud Backup" class="w-full h-40 object-cover">
-        <div class="p-4">
-          <h4 class="font-semibold text-[--navy]">Cloud Backup</h4>
-          <p class="text-sm mt-1">End-to-end encrypted snapshots every 6 hours.</p>
+        <div class="feature-card bg-white rounded-xl shadow-sm overflow-hidden border border-[--divider]">
+          <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=60"
+            alt="Cloud Backup" class="w-full h-40 object-cover">
+          <div class="p-4">
+            <h4 class="font-semibold text-[--navy]">Cloud Backup</h4>
+            <p class="text-sm mt-1">End-to-end encrypted snapshots every 6 hours.</p>
+          </div>
         </div>
-      </div>
 
-      <div class="feature-card bg-white rounded-xl shadow-sm overflow-hidden border border-[--divider]">
-        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=60" alt="Smart Charts" class="w-full h-40 object-cover">
-        <div class="p-4">
-          <h4 class="font-semibold text-[--navy]">Smart Charts</h4>
-          <p class="text-sm mt-1">Interactive D3 visualisations & future trend AI.</p>
+        <div class="feature-card bg-white rounded-xl shadow-sm overflow-hidden border border-[--divider]">
+          <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=60"
+            alt="Smart Charts" class="w-full h-40 object-cover">
+          <div class="p-4">
+            <h4 class="font-semibold text-[--navy]">Smart Charts</h4>
+            <p class="text-sm mt-1">Interactive D3 visualisations & future trend AI.</p>
+          </div>
         </div>
-      </div>
 
-      <div class="feature-card bg-white rounded-xl shadow-sm overflow-hidden border border-[--divider]">
-        <img src="https://images.unsplash.com/photo-1497032628192-86f27fde7f3c?auto=format&fit=crop&w=800&q=60" alt="Budget Alerts" class="w-full h-40 object-cover">
-        <div class="p-4">
-          <h4 class="font-semibold text-[--navy]">Budget Alerts</h4>
-          <p class="text-sm mt-1">Real-time push when you’re about to overspend.</p>
+        <div class="feature-card bg-white rounded-xl shadow-sm overflow-hidden border border-[--divider]">
+          <img src="https://images.unsplash.com/photo-1497032628192-86f27fde7f3c?auto=format&fit=crop&w=800&q=60"
+            alt="Budget Alerts" class="w-full h-40 object-cover">
+          <div class="p-4">
+            <h4 class="font-semibold text-[--navy]">Budget Alerts</h4>
+            <p class="text-sm mt-1">Real-time push when you’re about to overspend.</p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ========= BLOG (online images) ========= -->
-<section id="blog" class="py-20 bg-white/50">
-  <div class="max-w-6xl mx-auto px-4">
-    <h3 class="text-3xl font-bold text-[--navy] text-center mb-12">Latest Stories</h3>
-    <div class="grid md:grid-cols-3 gap-8">
-      <article class="blog-card bg-white rounded-xl shadow-sm overflow-hidden border border-[--divider]">
-        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=60" alt="50/30/20 budget" class="w-full h-48 object-cover">
-        <div class="p-5">
-          <span class="text-xs text-[--accent] font-semibold">BUDGETING 101</span>
-          <h5 class="font-bold text-[--navy] mt-1">How to build a 50/30/20 budget</h5>
-          <p class="text-sm mt-2">A step-by-step guide with free template download.</p>
-        </div>
-      </article>
+  <!-- ========= BLOG (online images) ========= -->
+  <section id="blog" class="py-20 bg-white/50">
+    <div class="max-w-6xl mx-auto px-4">
+      <h3 class="text-3xl font-bold text-[--navy] text-center mb-12">Latest Stories</h3>
+      <div class="grid md:grid-cols-3 gap-8">
+        <article class="blog-card bg-white rounded-xl shadow-sm overflow-hidden border border-[--divider]">
+          <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=60"
+            alt="50/30/20 budget" class="w-full h-48 object-cover">
+          <div class="p-5">
+            <span class="text-xs text-[--accent] font-semibold">BUDGETING 101</span>
+            <h5 class="font-bold text-[--navy] mt-1">How to build a 50/30/20 budget</h5>
+            <p class="text-sm mt-2">A step-by-step guide with free template download.</p>
+          </div>
+        </article>
 
-      <article class="blog-card bg-white rounded-xl shadow-sm overflow-hidden border border-[--divider]">
-        <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=60" alt="Groceries" class="w-full h-48 object-cover">
-        <div class="p-5">
-          <span class="text-xs text-[--accent] font-semibold">TRENDS</span>
-          <h5 class="font-bold text-[--navy] mt-1">Inflation-proof grocery hacks</h5>
-          <p class="text-sm mt-2">Cut 20 % from your food bill without coupons.</p>
-        </div>
-      </article>
+        <article class="blog-card bg-white rounded-xl shadow-sm overflow-hidden border border-[--divider]">
+          <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=60"
+            alt="Groceries" class="w-full h-48 object-cover">
+          <div class="p-5">
+            <span class="text-xs text-[--accent] font-semibold">TRENDS</span>
+            <h5 class="font-bold text-[--navy] mt-1">Inflation-proof grocery hacks</h5>
+            <p class="text-sm mt-2">Cut 20 % from your food bill without coupons.</p>
+          </div>
+        </article>
 
-      <article class="blog-card bg-white rounded-xl shadow-sm overflow-hidden border border-[--divider]">
-        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=60" alt="Savings jar" class="w-full h-48 object-cover">
-        <div class="p-5">
-          <span class="text-xs text-[--accent] font-semibold">CASE STUDY</span>
-          <h5 class="font-bold text-[--navy] mt-1">How Jen saved $12k in one year</h5>
-          <p class="text-sm mt-2">Real data from a user who shared her journey.</p>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ========= TESTIMONIALS (online images) ========= -->
-<section class="py-20">
-  <div class="max-w-6xl mx-auto px-4">
-    <h3 class="text-3xl font-bold text-[--navy] text-center mb-12">Loved by families</h3>
-    <div class="grid md:grid-cols-3 gap-8">
-      <div class="testimonial-card bg-white p-6 rounded-xl shadow-md text-center">
-        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=60" alt="Maya" class="w-20 h-20 rounded-full mx-auto mb-4 object-cover">
-        <blockquote class="italic text-[--muted]">“We finally stopped fighting about money. HomeBudget is our third roommate.”</blockquote>
-        <p class="mt-2 font-semibold text-[--navy]">– Maya & Leo, Berlin</p>
-      </div>
-
-      <div class="testimonial-card bg-white p-6 rounded-xl shadow-md text-center">
-        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=60" alt="James" class="w-20 h-20 rounded-full mx-auto mb-4 object-cover">
-        <blockquote class="italic text-[--muted]">“The AI alerts saved me from overspending on gadgets!”</blockquote>
-        <p class="mt-2 font-semibold text-[--navy]">– James, Austin</p>
-      </div>
-
-      <div class="testimonial-card bg-white p-6 rounded-xl shadow-md text-center">
-        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=60" alt="Aisha" class="w-20 h-20 rounded-full mx-auto mb-4 object-cover">
-        <blockquote class="italic text-[--muted]">“Shared budgets made splitting rent with friends effortless.”</blockquote>
-        <p class="mt-2 font-semibold text-[--navy]">– Aisha, Dubai</p>
+        <article class="blog-card bg-white rounded-xl shadow-sm overflow-hidden border border-[--divider]">
+          <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=60"
+            alt="Savings jar" class="w-full h-48 object-cover">
+          <div class="p-5">
+            <span class="text-xs text-[--accent] font-semibold">CASE STUDY</span>
+            <h5 class="font-bold text-[--navy] mt-1">How Jen saved $12k in one year</h5>
+            <p class="text-sm mt-2">Real data from a user who shared her journey.</p>
+          </div>
+        </article>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ========= STATS (animated counters) ========= -->
-<section class="py-20 bg-white/50">
-  <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8 text-center">
-    <div>
-      <p class="text-5xl font-bold text-[--accent] counter" data-target="250000">0</p>
-      <p class="text-sm text-[--muted]">Happy users</p>
+  <!-- ========= TESTIMONIALS (online images) ========= -->
+  <section class="py-20">
+    <div class="max-w-6xl mx-auto px-4">
+      <h3 class="text-3xl font-bold text-[--navy] text-center mb-12">Loved by families</h3>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="testimonial-card bg-white p-6 rounded-xl shadow-md text-center">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=60"
+            alt="Maya" class="w-20 h-20 rounded-full mx-auto mb-4 object-cover">
+          <blockquote class="italic text-[--muted]">“We finally stopped fighting about money. HomeBudget is our third
+            roommate.”</blockquote>
+          <p class="mt-2 font-semibold text-[--navy]">– Maya & Leo, Berlin</p>
+        </div>
+
+        <div class="testimonial-card bg-white p-6 rounded-xl shadow-md text-center">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=60"
+            alt="James" class="w-20 h-20 rounded-full mx-auto mb-4 object-cover">
+          <blockquote class="italic text-[--muted]">“The AI alerts saved me from overspending on gadgets!”</blockquote>
+          <p class="mt-2 font-semibold text-[--navy]">– James, Austin</p>
+        </div>
+
+        <div class="testimonial-card bg-white p-6 rounded-xl shadow-md text-center">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=60"
+            alt="Aisha" class="w-20 h-20 rounded-full mx-auto mb-4 object-cover">
+          <blockquote class="italic text-[--muted]">“Shared budgets made splitting rent with friends effortless.”
+          </blockquote>
+          <p class="mt-2 font-semibold text-[--navy]">– Aisha, Dubai</p>
+        </div>
+      </div>
     </div>
-    <div>
-      <p class="text-5xl font-bold text-[--accent] counter" data-target="98">0</p>
-      <p class="text-sm text-[--muted]">% would recommend</p>
+  </section>
+
+  <!-- ========= STATS (animated counters) ========= -->
+  <section class="py-20 bg-white/50">
+    <div class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-8 text-center">
+      <div>
+        <p class="text-5xl font-bold text-[--accent] counter" data-target="250000">0</p>
+        <p class="text-sm text-[--muted]">Happy users</p>
+      </div>
+      <div>
+        <p class="text-5xl font-bold text-[--accent] counter" data-target="98">0</p>
+        <p class="text-sm text-[--muted]">% would recommend</p>
+      </div>
+      <div>
+        <p class="text-5xl font-bold text-[--accent] counter" data-target="12">0</p>
+        <p class="text-sm text-[--muted]">Countries supported</p>
+      </div>
     </div>
-    <div>
-      <p class="text-5xl font-bold text-[--accent] counter" data-target="12">0</p>
-      <p class="text-sm text-[--muted]">Countries supported</p>
+  </section>
+
+  <!-- ========= CTA / NEWSLETTER ========= -->
+  <section class="py-20 bg-[--navy] text-white">
+    <div class="max-w-lg mx-auto text-center">
+      <h3 class="text-2xl font-bold">Stay in the loop</h3>
+      <p class="text-sm mt-2 mb-6">Monthly money tips, zero spam.</p>
+      <form id="newsletter" class="flex gap-2 max-w-sm mx-auto">
+        <input type="email" placeholder="your@email.com" required
+          class="flex-1 rounded px-4 py-2 text-[--navy] focus:outline-none" />
+        <button
+          class="bg-[--accent] text-[--navy] font-semibold px-4 py-2 rounded transition hover:bg-yellow-400">Join</button>
+      </form>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ========= CTA / NEWSLETTER ========= -->
-<section class="py-20 bg-[--navy] text-white">
-  <div class="max-w-lg mx-auto text-center">
-    <h3 class="text-2xl font-bold">Stay in the loop</h3>
-    <p class="text-sm mt-2 mb-6">Monthly money tips, zero spam.</p>
-    <form id="newsletter" class="flex gap-2 max-w-sm mx-auto">
-      <input type="email" placeholder="your@email.com" required
-             class="flex-1 rounded px-4 py-2 text-[--navy] focus:outline-none"/>
-      <button class="bg-[--accent] text-[--navy] font-semibold px-4 py-2 rounded transition hover:bg-yellow-400">Join</button>
-    </form>
-  </div>
-</section>
-
-<!-- ========= FAQ ACCORDION ========= -->
-<section class="py-20">
-  <div class="max-w-3xl mx-auto px-4">
-    <h3 class="text-3xl font-bold text-[--navy] text-center mb-10">FAQ</h3>
-    <div id="faq" class="space-y-4"></div>
-  </div>
-</section>
-
-<!-- ========= FOOTER ========= -->
-<footer class="bg-[--navy] text-white/80 text-sm py-8">
-  <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between">
-    <p>&copy; 2025 HomeBudget</p>
-    <div class="mt-2 md:mt-0 space-x-4">
-      <a href="pages/privacy.html" class="hover:text-[--accent] transition">Privacy</a>
-      <a href="pages/terms.html" class="hover:text-[--accent] transition">Terms</a>
+  <!-- ========= FAQ ACCORDION ========= -->
+  <section class="py-20">
+    <div class="max-w-3xl mx-auto px-4">
+      <h3 class="text-3xl font-bold text-[--navy] text-center mb-10">FAQ</h3>
+      <div id="faq" class="space-y-4"></div>
     </div>
-  </div>
-</footer>
+  </section>
 
-<!-- ========= JS ========= -->
-<script src="js/index.js"> </script>
+  <!-- ========= FOOTER ========= -->
+  <footer class="bg-[--navy] text-white/80 text-sm py-8">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between">
+      <p>&copy; 2025 HomeBudget</p>
+      <div class="mt-2 md:mt-0 space-x-4">
+        <a href="pages/privacy.html" class="hover:text-[--accent] transition">Privacy</a>
+        <a href="pages/terms.html" class="hover:text-[--accent] transition">Terms</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========= JS ========= -->
+  <script src="js/index.js"> </script>
 </body>
+
 </html>

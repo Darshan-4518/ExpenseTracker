@@ -70,8 +70,6 @@ document.getElementById('newsletter').addEventListener('submit', e => {
   e.target.reset();
 });
 
-const userId = localStorage.getItem("userId");
-
 if(userId){
   document.getElementById('dashboard').style.display="block";
   document.getElementById('cashbook').style.display="block";

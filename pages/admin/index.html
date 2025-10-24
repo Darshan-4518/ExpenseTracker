@@ -29,7 +29,6 @@
         </div>
     </header>
 
-
     <main class="pt-24 px-4 max-w-6xl mx-auto space-y-8">
 
         <section class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -54,11 +53,10 @@
                     </tr>
                 </thead>
                 <tbody id="adminTable">
-
+                    <!-- Admin rows go here -->
                 </tbody>
             </table>
         </section>
-
 
         <section class="bg-white border border-[--divider] rounded-lg p-6 shadow">
             <h2 class="text-xl font-bold text-[--navy] mb-4">Manage Users</h2>
@@ -73,11 +71,9 @@
                     </tr>
                 </thead>
                 <tbody id="userTable">
-
                 </tbody>
             </table>
         </section>
-
 
         <section class="bg-white border border-[--divider] rounded-lg p-6 shadow">
             <h2 class="text-xl font-bold text-[--navy] mb-4">Compose Email</h2>
@@ -105,115 +101,21 @@
 
     </main>
 
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
+            <h3 class="text-lg font-bold text-[--navy] mb-2">Reason for Deletion</h3>
+            <textarea id="deleteReason" rows="4" placeholder="Enter reason..."
+                class="w-full border border-[--divider] rounded-lg px-3 py-2 focus:ring-2 focus:ring-[--accent] focus:outline-none"></textarea>
+            <div class="flex justify-end gap-4 mt-4">
+                <button onclick="cancelDelete()" class="px-4 py-2 bg-gray-300 text-[--navy] rounded hover:bg-gray-400">Cancel</button>
+                <button onclick="confirmDelete()" class="px-4 py-2 bg-[--accent] text-[--navy] rounded hover:bg-yellow-400">Delete</button>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        let users = [
-
-        ];
-
-        const currentUserId = localStorage.getItem("userId");
-
-        const userTable = document.getElementById("userTable");
-        const adminTable = document.getElementById("adminTable");
-        const userCount = document.getElementById("userCount");
-        const adminCount = document.getElementById("adminCount");
-
-        function renderUsers() {
-            userTable.innerHTML = "";
-            userCount.textContent = users.length;
-            adminCount.textContent = users.filter(u => u.role === "admin").length;
-
-            users.forEach(user => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-          <td><input type="checkbox" class="userCheckbox" value="${user.email}"></td>
-          <td class="py-2">${user.firstName}</td>
-          <td>${user.email}</td>
-          <td>${user.ROLE.toLowerCase()}</td>
-          <td><button onclick="deleteUser(${user.id})" class="text-red-600 hover:underline">Delete</button></td>
-        `;
-                userTable.appendChild(row);
-            });
-        }
-
-        function renderOtherAdmins() {
-            console.log(currentUserId);
-            adminTable.innerHTML = "";
-            const otherAdmins = users.filter(u => u.ROLE === "ADMIN" && u._id !== currentUserId);
-            otherAdmins.forEach(admin => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-          <td class="py-2">${admin.firstName}</td>
-          <td>${admin.email}</td>
-          <td>${admin.ROLE.toLowerCase()}</td>
-        `;
-                adminTable.appendChild(row);
-            });
-        }
-
-        function deleteUser(id) {
-            const index = users.findIndex(u => u.id === id);
-            if (index !== -1) {
-                users.splice(index, 1);
-                renderUsers();
-                renderOtherAdmins();
-            }
-        }
-
-        function getEmailDetails() {
-            const subject = document.getElementById("emailSubject").value.trim();
-            const content = document.getElementById("emailContent").value.trim();
-
-            if (!subject || !content) {
-                alert("Please enter both subject and message content.");
-                return null;
-            }
-
-            return { subject, content };
-        }
-
-        function sendEmailToAll() {
-            const details = getEmailDetails();
-            if (!details) return;
-
-            const emails = users.map(u => u.email);
-            alert(`Sending email to ALL users:\n\nSubject: ${details.subject}\nMessage: ${details.content}\nRecipients: ${emails.join(", ")}`);
-        }
-
-        function sendEmailToSelected() {
-            const details = getEmailDetails();
-            if (!details) return;
-
-            const selected = Array.from(document.querySelectorAll(".userCheckbox:checked"))
-                .map(cb => cb.value);
-
-            if (selected.length === 0) {
-                alert("No users selected.");
-                return;
-            }
-
-            alert(`Sending email to SELECTED users:\n\nSubject: ${details.subject}\nMessage: ${details.content}\nRecipients: ${selected.join(", ")}`);
-        }
-
-        async function getAllTheUsers() {
-            return fetch("http://localhost:3000/api/users").then(async (e) => {
-                const response = await e.json();
-
-                console.log(response);
-                
-                users = response.data;
-
-                console.log(users);
-            })
-        }
-
-        getAllTheUsers().then(() => {
-
-            console.log(users);
-
-            renderUsers();
-            renderOtherAdmins();
-        })
+    <script src="../../js/admin/index.js">
+        
     </script>
 </body>
 
